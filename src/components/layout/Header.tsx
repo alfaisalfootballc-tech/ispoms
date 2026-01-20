@@ -1,4 +1,4 @@
-import { Bell, Search, ChevronDown, Menu } from "lucide-react";
+import { Bell, Search, ChevronDown, Menu, LogOut, Settings, User, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -9,12 +9,44 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
+import { Badge } from "@/components/ui/badge";
 
 interface HeaderProps {
   onMenuClick?: () => void;
 }
 
 export function Header({ onMenuClick }: HeaderProps) {
+  const { profile, role, signOut } = useAuth();
+
+  const getInitials = () => {
+    if (profile?.first_name && profile?.last_name) {
+      return `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase();
+    }
+    if (profile?.email) {
+      return profile.email[0].toUpperCase();
+    }
+    return "U";
+  };
+
+  const getDisplayName = () => {
+    if (profile?.first_name && profile?.last_name) {
+      return `${profile.first_name} ${profile.last_name}`;
+    }
+    return profile?.email?.split("@")[0] || "User";
+  };
+
+  const getRoleBadgeVariant = () => {
+    switch (role) {
+      case "admin":
+        return "destructive";
+      case "manager":
+        return "default";
+      default:
+        return "secondary";
+    }
+  };
+
   return (
     <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 sticky top-0 z-30">
       {/* Left Section */}
@@ -88,24 +120,46 @@ export function Header({ onMenuClick }: HeaderProps) {
           <DropdownMenuTrigger asChild>
             <button className="flex items-center gap-3 hover:bg-muted rounded-lg p-2 transition-colors">
               <Avatar className="h-8 w-8">
-                <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face" />
-                <AvatarFallback className="bg-primary text-primary-foreground text-xs">JD</AvatarFallback>
+                <AvatarImage src={profile?.avatar_url || undefined} />
+                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                  {getInitials()}
+                </AvatarFallback>
               </Avatar>
               <div className="hidden md:flex flex-col items-start">
-                <span className="text-sm font-medium">John Doe</span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Admin</span>
+                <span className="text-sm font-medium">{getDisplayName()}</span>
+                <Badge variant={getRoleBadgeVariant()} className="text-[9px] px-1.5 py-0 h-4 uppercase">
+                  {role || "staff"}
+                </Badge>
               </div>
               <ChevronDown className="w-4 h-4 text-muted-foreground hidden md:block" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              <div className="flex flex-col">
+                <span>{getDisplayName()}</span>
+                <span className="text-xs font-normal text-muted-foreground">{profile?.email}</span>
+              </div>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile Settings</DropdownMenuItem>
-            <DropdownMenuItem>Preferences</DropdownMenuItem>
-            <DropdownMenuItem>Help & Support</DropdownMenuItem>
+            <DropdownMenuItem>
+              <User className="w-4 h-4 mr-2" />
+              Profile Settings
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Settings className="w-4 h-4 mr-2" />
+              Preferences
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <HelpCircle className="w-4 h-4 mr-2" />
+              Help & Support
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive focus:text-destructive">
+            <DropdownMenuItem 
+              className="text-destructive focus:text-destructive"
+              onClick={signOut}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
               Sign out
             </DropdownMenuItem>
           </DropdownMenuContent>
