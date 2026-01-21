@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import Documents from "./pages/Documents";
 import Unauthorized from "./pages/Unauthorized";
 import Employees from "./pages/Employees";
 import Tasks from "./pages/Tasks";
@@ -57,7 +58,7 @@ const App = () => (
             } />
             <Route path="/documents" element={
               <ProtectedRoute>
-                <Index />
+                <Documents />
               </ProtectedRoute>
             } />
             <Route path="/leave" element={

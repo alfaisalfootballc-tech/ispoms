@@ -49,6 +49,178 @@ export type Database = {
           },
         ]
       }
+      document_access: {
+        Row: {
+          access_level: Database["public"]["Enums"]["access_level"]
+          created_at: string
+          document_id: string
+          granted_by: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          access_level?: Database["public"]["Enums"]["access_level"]
+          created_at?: string
+          document_id: string
+          granted_by: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          access_level?: Database["public"]["Enums"]["access_level"]
+          created_at?: string
+          document_id?: string
+          granted_by?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_access_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_access_granted_by_fkey"
+            columns: ["granted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_access_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_versions: {
+        Row: {
+          change_notes: string | null
+          created_at: string
+          document_id: string
+          file_name: string
+          file_path: string
+          file_size: number
+          id: string
+          mime_type: string
+          uploaded_by: string
+          version: number
+        }
+        Insert: {
+          change_notes?: string | null
+          created_at?: string
+          document_id: string
+          file_name: string
+          file_path: string
+          file_size: number
+          id?: string
+          mime_type: string
+          uploaded_by: string
+          version: number
+        }
+        Update: {
+          change_notes?: string | null
+          created_at?: string
+          document_id?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number
+          id?: string
+          mime_type?: string
+          uploaded_by?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_versions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_versions_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          category: string | null
+          created_at: string
+          department_id: string | null
+          description: string | null
+          file_name: string
+          file_path: string
+          file_size: number
+          id: string
+          is_public: boolean
+          mime_type: string
+          status: Database["public"]["Enums"]["document_status"]
+          title: string
+          updated_at: string
+          uploaded_by: string
+          version: number
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          file_name: string
+          file_path: string
+          file_size: number
+          id?: string
+          is_public?: boolean
+          mime_type: string
+          status?: Database["public"]["Enums"]["document_status"]
+          title: string
+          updated_at?: string
+          uploaded_by: string
+          version?: number
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          file_name?: string
+          file_path?: string
+          file_size?: number
+          id?: string
+          is_public?: boolean
+          mime_type?: string
+          status?: Database["public"]["Enums"]["document_status"]
+          title?: string
+          updated_at?: string
+          uploaded_by?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -119,6 +291,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_access_document: {
+        Args: { _document_id: string; _user_id: string }
+        Returns: boolean
+      }
+      can_edit_document: {
+        Args: { _document_id: string; _user_id: string }
+        Returns: boolean
+      }
       get_user_department_id: { Args: never; Returns: string }
       has_role: {
         Args: {
@@ -132,7 +312,9 @@ export type Database = {
       is_staff: { Args: never; Returns: boolean }
     }
     Enums: {
+      access_level: "view" | "edit" | "admin"
       app_role: "admin" | "manager" | "staff"
+      document_status: "draft" | "published" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -260,7 +442,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      access_level: ["view", "edit", "admin"],
       app_role: ["admin", "manager", "staff"],
+      document_status: ["draft", "published", "archived"],
     },
   },
 } as const
