@@ -221,6 +221,160 @@ export type Database = {
           },
         ]
       }
+      leave_balances: {
+        Row: {
+          created_at: string
+          id: string
+          leave_type_id: string
+          pending_days: number
+          total_days: number
+          updated_at: string
+          used_days: number
+          user_id: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          leave_type_id: string
+          pending_days?: number
+          total_days?: number
+          updated_at?: string
+          used_days?: number
+          user_id: string
+          year?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          leave_type_id?: string
+          pending_days?: number
+          total_days?: number
+          updated_at?: string
+          used_days?: number
+          user_id?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leave_balances_leave_type_id_fkey"
+            columns: ["leave_type_id"]
+            isOneToOne: false
+            referencedRelation: "leave_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leave_balances_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leave_requests: {
+        Row: {
+          created_at: string
+          days_count: number
+          end_date: string
+          id: string
+          leave_type_id: string
+          reason: string | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          start_date: string
+          status: Database["public"]["Enums"]["leave_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          days_count: number
+          end_date: string
+          id?: string
+          leave_type_id: string
+          reason?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          start_date: string
+          status?: Database["public"]["Enums"]["leave_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          days_count?: number
+          end_date?: string
+          id?: string
+          leave_type_id?: string
+          reason?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          start_date?: string
+          status?: Database["public"]["Enums"]["leave_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leave_requests_leave_type_id_fkey"
+            columns: ["leave_type_id"]
+            isOneToOne: false
+            referencedRelation: "leave_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leave_requests_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leave_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leave_types: {
+        Row: {
+          color: string
+          created_at: string
+          days_per_year: number
+          description: string | null
+          id: string
+          is_paid: boolean
+          name: string
+          requires_approval: boolean
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          days_per_year?: number
+          description?: string | null
+          id?: string
+          is_paid?: boolean
+          name: string
+          requires_approval?: boolean
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          days_per_year?: number
+          description?: string | null
+          id?: string
+          is_paid?: boolean
+          name?: string
+          requires_approval?: boolean
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -315,6 +469,7 @@ export type Database = {
       access_level: "view" | "edit" | "admin"
       app_role: "admin" | "manager" | "staff"
       document_status: "draft" | "published" | "archived"
+      leave_status: "pending" | "approved" | "rejected" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -445,6 +600,7 @@ export const Constants = {
       access_level: ["view", "edit", "admin"],
       app_role: ["admin", "manager", "staff"],
       document_status: ["draft", "published", "archived"],
+      leave_status: ["pending", "approved", "rejected", "cancelled"],
     },
   },
 } as const
