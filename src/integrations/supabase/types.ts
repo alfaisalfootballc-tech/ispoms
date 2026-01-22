@@ -14,6 +14,105 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcement_reads: {
+        Row: {
+          announcement_id: string
+          id: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          announcement_id: string
+          id?: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          announcement_id?: string
+          id?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_reads_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "announcement_reads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcements: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string
+          excerpt: string | null
+          expires_at: string | null
+          id: string
+          is_pinned: boolean
+          priority: Database["public"]["Enums"]["announcement_priority"]
+          published_at: string | null
+          target_all: boolean
+          target_department_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by: string
+          excerpt?: string | null
+          expires_at?: string | null
+          id?: string
+          is_pinned?: boolean
+          priority?: Database["public"]["Enums"]["announcement_priority"]
+          published_at?: string | null
+          target_all?: boolean
+          target_department_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string
+          excerpt?: string | null
+          expires_at?: string | null
+          id?: string
+          is_pinned?: boolean
+          priority?: Database["public"]["Enums"]["announcement_priority"]
+          published_at?: string | null
+          target_all?: boolean
+          target_department_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "announcements_target_department_id_fkey"
+            columns: ["target_department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       departments: {
         Row: {
           created_at: string
@@ -453,6 +552,10 @@ export type Database = {
         Args: { _document_id: string; _user_id: string }
         Returns: boolean
       }
+      can_view_announcement: {
+        Args: { _announcement_id: string; _user_id: string }
+        Returns: boolean
+      }
       get_user_department_id: { Args: never; Returns: string }
       has_role: {
         Args: {
@@ -467,6 +570,7 @@ export type Database = {
     }
     Enums: {
       access_level: "view" | "edit" | "admin"
+      announcement_priority: "low" | "normal" | "high" | "urgent"
       app_role: "admin" | "manager" | "staff"
       document_status: "draft" | "published" | "archived"
       leave_status: "pending" | "approved" | "rejected" | "cancelled"
@@ -598,6 +702,7 @@ export const Constants = {
   public: {
     Enums: {
       access_level: ["view", "edit", "admin"],
+      announcement_priority: ["low", "normal", "high", "urgent"],
       app_role: ["admin", "manager", "staff"],
       document_status: ["draft", "published", "archived"],
       leave_status: ["pending", "approved", "rejected", "cancelled"],
