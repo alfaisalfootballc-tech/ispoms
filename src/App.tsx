@@ -11,6 +11,7 @@ import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Documents from "./pages/Documents";
+import Leave from "./pages/Leave";
 import Unauthorized from "./pages/Unauthorized";
 import Employees from "./pages/Employees";
 import Tasks from "./pages/Tasks";
@@ -63,7 +64,7 @@ const App = () => (
             } />
             <Route path="/leave" element={
               <ProtectedRoute>
-                <Index />
+                <Leave />
               </ProtectedRoute>
             } />
             <Route path="/announcements" element={
