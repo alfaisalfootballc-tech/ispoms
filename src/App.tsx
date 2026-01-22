@@ -12,6 +12,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Documents from "./pages/Documents";
 import Leave from "./pages/Leave";
+import Announcements from "./pages/Announcements";
 import Unauthorized from "./pages/Unauthorized";
 import Employees from "./pages/Employees";
 import Tasks from "./pages/Tasks";
@@ -69,7 +70,7 @@ const App = () => (
             } />
             <Route path="/announcements" element={
               <ProtectedRoute>
-                <Index />
+                <Announcements />
               </ProtectedRoute>
             } />
             <Route path="/reports" element={
