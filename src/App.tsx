@@ -16,6 +16,7 @@ import Announcements from "./pages/Announcements";
 import Unauthorized from "./pages/Unauthorized";
 import Employees from "./pages/Employees";
 import Tasks from "./pages/Tasks";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -75,7 +76,12 @@ const App = () => (
             } />
             <Route path="/reports" element={
               <ProtectedRoute allowedRoles={["admin", "manager"]}>
-                <Index />
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute allowedRoles={["admin", "manager"]}>
+                <AdminDashboard />
               </ProtectedRoute>
             } />
             <Route path="/settings" element={

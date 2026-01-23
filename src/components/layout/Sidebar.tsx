@@ -12,26 +12,29 @@ import {
   LogOut,
   ChevronLeft,
   Building2,
-  Bell,
+  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface NavItem {
   icon: React.ElementType;
   label: string;
   path: string;
   badge?: number;
+  adminOnly?: boolean;
 }
 
 const navItems: NavItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Users, label: "Employees", path: "/employees" },
-  { icon: Building2, label: "Departments", path: "/departments" },
+  { icon: Building2, label: "Departments", path: "/departments", adminOnly: true },
   { icon: ClipboardList, label: "Tasks", path: "/tasks" },
   { icon: FileText, label: "Documents", path: "/documents" },
   { icon: Calendar, label: "Leave Management", path: "/leave" },
   { icon: Megaphone, label: "Announcements", path: "/announcements", badge: 3 },
-  { icon: BarChart3, label: "Reports", path: "/reports" },
+  { icon: BarChart3, label: "Reports", path: "/reports", adminOnly: true },
+  { icon: Shield, label: "Admin", path: "/admin", adminOnly: true },
 ];
 
 const bottomNavItems: NavItem[] = [
@@ -41,6 +44,12 @@ const bottomNavItems: NavItem[] = [
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const { isAdmin, isManager, signOut } = useAuth();
+
+  // Filter nav items based on role
+  const filteredNavItems = navItems.filter(
+    (item) => !item.adminOnly || isAdmin || isManager
+  );
 
   return (
     <aside
@@ -75,7 +84,7 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-        {navItems.map((item) => {
+        {filteredNavItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <Link
@@ -130,6 +139,7 @@ export function Sidebar() {
           );
         })}
         <button
+          onClick={() => signOut()}
           className={cn(
             "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 w-full text-destructive/80 hover:bg-destructive/10 hover:text-destructive"
           )}
