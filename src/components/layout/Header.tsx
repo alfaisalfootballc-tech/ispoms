@@ -1,4 +1,4 @@
-import { Bell, Search, ChevronDown, Menu, LogOut, Settings, User, HelpCircle } from "lucide-react";
+import { Bell, Search, ChevronDown, Menu, LogOut, Settings, User, HelpCircle, CheckCheck, ListTodo, Calendar, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -11,13 +11,30 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
+import { useNotifications, Notification } from "@/hooks/useNotifications";
+import { formatDistanceToNow } from "date-fns";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface HeaderProps {
   onMenuClick?: () => void;
 }
 
+const notificationIcons: Record<Notification["type"], typeof ListTodo> = {
+  task: ListTodo,
+  leave: Calendar,
+  announcement: Megaphone,
+};
+
+const notificationColors: Record<Notification["type"], string> = {
+  task: "text-primary",
+  leave: "text-warning",
+  announcement: "text-info",
+};
+
 export function Header({ onMenuClick }: HeaderProps) {
   const { profile, role, signOut } = useAuth();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
   const getInitials = () => {
     if (profile?.first_name && profile?.last_name) {
@@ -45,6 +62,11 @@ export function Header({ onMenuClick }: HeaderProps) {
       default:
         return "secondary";
     }
+  };
+
+  const handleNotificationClick = (notification: Notification) => {
+    markAsRead(notification.id);
+    // Could navigate to relevant page based on type
   };
 
   return (
@@ -79,39 +101,83 @@ export function Header({ onMenuClick }: HeaderProps) {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="w-5 h-5 text-muted-foreground" />
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
-                5
-              </span>
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80">
             <DropdownMenuLabel className="flex items-center justify-between">
               <span>Notifications</span>
-              <Button variant="ghost" size="sm" className="text-xs text-primary">
-                Mark all read
-              </Button>
+              {unreadCount > 0 && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-xs text-primary h-auto py-1"
+                  onClick={markAllAsRead}
+                >
+                  <CheckCheck className="w-3 h-3 mr-1" />
+                  Mark all read
+                </Button>
+              )}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <div className="max-h-[300px] overflow-y-auto">
-              {[
-                { title: "New task assigned", desc: "Project documentation review", time: "2 min ago", unread: true },
-                { title: "Leave approved", desc: "Your leave request has been approved", time: "1 hour ago", unread: true },
-                { title: "Meeting reminder", desc: "Team standup in 30 minutes", time: "2 hours ago", unread: false },
-              ].map((notification, i) => (
-                <DropdownMenuItem key={i} className="flex flex-col items-start gap-1 p-3 cursor-pointer">
-                  <div className="flex items-center gap-2 w-full">
-                    {notification.unread && <span className="w-2 h-2 rounded-full bg-primary" />}
-                    <span className="font-medium text-sm">{notification.title}</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">{notification.desc}</span>
-                  <span className="text-[10px] text-muted-foreground/60">{notification.time}</span>
+            <ScrollArea className="h-[300px]">
+              {notifications.length === 0 ? (
+                <div className="py-8 text-center text-muted-foreground text-sm">
+                  <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  No notifications yet
+                </div>
+              ) : (
+                notifications.map((notification) => {
+                  const Icon = notificationIcons[notification.type];
+                  return (
+                    <DropdownMenuItem 
+                      key={notification.id} 
+                      className="flex items-start gap-3 p-3 cursor-pointer"
+                      onClick={() => handleNotificationClick(notification)}
+                    >
+                      <div className={cn(
+                        "mt-0.5 p-1.5 rounded-md bg-muted",
+                        notificationColors[notification.type]
+                      )}>
+                        <Icon className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          {!notification.read && (
+                            <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+                          )}
+                          <span className={cn(
+                            "font-medium text-sm truncate",
+                            !notification.read && "text-foreground",
+                            notification.read && "text-muted-foreground"
+                          )}>
+                            {notification.title}
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">
+                          {notification.description}
+                        </p>
+                        <span className="text-[10px] text-muted-foreground/60">
+                          {formatDistanceToNow(notification.timestamp, { addSuffix: true })}
+                        </span>
+                      </div>
+                    </DropdownMenuItem>
+                  );
+                })
+              )}
+            </ScrollArea>
+            {notifications.length > 0 && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="justify-center text-primary text-sm font-medium">
+                  View all notifications
                 </DropdownMenuItem>
-              ))}
-            </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="justify-center text-primary text-sm font-medium">
-              View all notifications
-            </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
 
