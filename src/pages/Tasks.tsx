@@ -1,5 +1,5 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { useTasks } from "@/hooks/useTasks";
+import { useTasks, TaskStatus } from "@/hooks/useTasks";
 import { CreateTaskDialog } from "@/components/tasks/CreateTaskDialog";
 import { TaskColumn } from "@/components/tasks/TaskColumn";
 import { Input } from "@/components/ui/input";
@@ -22,28 +22,29 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { TaskPriority } from "@/hooks/useTasks";
+import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 
 const columns = [
   {
-    id: "todo",
+    id: "todo" as TaskStatus,
     title: "To Do",
     icon: ListTodo,
     color: "bg-muted text-muted-foreground",
   },
   {
-    id: "in_progress",
+    id: "in_progress" as TaskStatus,
     title: "In Progress",
     icon: Clock,
     color: "bg-warning/10 text-warning",
   },
   {
-    id: "in_review",
+    id: "in_review" as TaskStatus,
     title: "In Review",
     icon: Eye,
     color: "bg-info/10 text-info",
   },
   {
-    id: "completed",
+    id: "completed" as TaskStatus,
     title: "Completed",
     icon: CheckCircle2,
     color: "bg-success/10 text-success",
@@ -51,7 +52,7 @@ const columns = [
 ];
 
 export default function Tasks() {
-  const { tasksByStatus, stats, isLoading, error } = useTasks();
+  const { tasksByStatus, stats, isLoading, error, updateTaskStatus } = useTasks();
   const [searchQuery, setSearchQuery] = useState("");
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | "all">("all");
 
@@ -65,6 +66,29 @@ export default function Tasks() {
         priorityFilter === "all" || task.priority === priorityFilter;
       return matchesSearch && matchesPriority;
     });
+  };
+
+  const handleDragEnd = async (result: DropResult) => {
+    const { destination, source, draggableId } = result;
+
+    // Dropped outside a droppable area
+    if (!destination) return;
+
+    // Dropped in the same position
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    // Update task status if moved to a different column
+    if (destination.droppableId !== source.droppableId) {
+      await updateTaskStatus({
+        id: draggableId,
+        status: destination.droppableId as TaskStatus,
+      });
+    }
   };
 
   if (error) {
@@ -154,19 +178,22 @@ export default function Tasks() {
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {columns.map((column) => (
-              <TaskColumn
-                key={column.id}
-                title={column.title}
-                icon={column.icon}
-                color={column.color}
-                tasks={filterTasks(
-                  tasksByStatus[column.id as keyof typeof tasksByStatus]
-                )}
-              />
-            ))}
-          </div>
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {columns.map((column) => (
+                <TaskColumn
+                  key={column.id}
+                  id={column.id}
+                  title={column.title}
+                  icon={column.icon}
+                  color={column.color}
+                  tasks={filterTasks(
+                    tasksByStatus[column.id as keyof typeof tasksByStatus]
+                  )}
+                />
+              ))}
+            </div>
+          </DragDropContext>
         )}
       </div>
     </DashboardLayout>
