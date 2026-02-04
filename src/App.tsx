@@ -17,6 +17,7 @@ import Unauthorized from "./pages/Unauthorized";
 import Employees from "./pages/Employees";
 import Tasks from "./pages/Tasks";
 import AdminDashboard from "./pages/AdminDashboard";
+import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -72,6 +73,11 @@ const App = () => (
             <Route path="/announcements" element={
               <ProtectedRoute>
                 <Announcements />
+              </ProtectedRoute>
+            } />
+            <Route path="/messages" element={
+              <ProtectedRoute>
+                <Messages />
               </ProtectedRoute>
             } />
             <Route path="/reports" element={
