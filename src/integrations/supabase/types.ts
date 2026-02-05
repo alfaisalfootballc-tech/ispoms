@@ -113,6 +113,56 @@ export type Database = {
           },
         ]
       }
+      attendance_records: {
+        Row: {
+          clock_in: string | null
+          clock_in_location: Json | null
+          clock_out: string | null
+          clock_out_location: Json | null
+          created_at: string
+          date: string
+          id: string
+          notes: string | null
+          status: Database["public"]["Enums"]["attendance_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          clock_in?: string | null
+          clock_in_location?: Json | null
+          clock_out?: string | null
+          clock_out_location?: Json | null
+          created_at?: string
+          date?: string
+          id?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["attendance_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          clock_in?: string | null
+          clock_in_location?: Json | null
+          clock_out?: string | null
+          clock_out_location?: Json | null
+          created_at?: string
+          date?: string
+          id?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["attendance_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_channel_members: {
         Row: {
           channel_id: string
@@ -823,6 +873,10 @@ export type Database = {
         Args: { _announcement_id: string; _user_id: string }
         Returns: boolean
       }
+      can_view_attendance: {
+        Args: { _record_user_id: string; _user_id: string }
+        Returns: boolean
+      }
       get_user_department_id: { Args: never; Returns: string }
       has_role: {
         Args: {
@@ -847,6 +901,7 @@ export type Database = {
       access_level: "view" | "edit" | "admin"
       announcement_priority: "low" | "normal" | "high" | "urgent"
       app_role: "admin" | "manager" | "staff"
+      attendance_status: "present" | "late" | "remote" | "half_day" | "absent"
       document_status: "draft" | "published" | "archived"
       leave_status: "pending" | "approved" | "rejected" | "cancelled"
       task_priority: "low" | "medium" | "high" | "urgent"
@@ -981,6 +1036,7 @@ export const Constants = {
       access_level: ["view", "edit", "admin"],
       announcement_priority: ["low", "normal", "high", "urgent"],
       app_role: ["admin", "manager", "staff"],
+      attendance_status: ["present", "late", "remote", "half_day", "absent"],
       document_status: ["draft", "published", "archived"],
       leave_status: ["pending", "approved", "rejected", "cancelled"],
       task_priority: ["low", "medium", "high", "urgent"],

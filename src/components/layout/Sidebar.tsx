@@ -14,6 +14,7 @@ import {
   Building2,
   Shield,
   MessageCircle,
+   Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -32,6 +33,7 @@ const navItems: NavItem[] = [
   { icon: Building2, label: "Departments", path: "/departments", adminOnly: true },
   { icon: ClipboardList, label: "Tasks", path: "/tasks" },
   { icon: MessageCircle, label: "Messages", path: "/messages" },
+   { icon: Clock, label: "Attendance", path: "/attendance" },
   { icon: FileText, label: "Documents", path: "/documents" },
   { icon: Calendar, label: "Leave Management", path: "/leave" },
   { icon: Megaphone, label: "Announcements", path: "/announcements", badge: 3 },
