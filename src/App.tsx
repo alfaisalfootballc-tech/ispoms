@@ -19,6 +19,7 @@ import Tasks from "./pages/Tasks";
 import AdminDashboard from "./pages/AdminDashboard";
 import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
+ import Attendance from "./pages/Attendance";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +81,11 @@ const App = () => (
                 <Messages />
               </ProtectedRoute>
             } />
+           <Route path="/attendance" element={
+             <ProtectedRoute>
+               <Attendance />
+             </ProtectedRoute>
+           } />
             <Route path="/reports" element={
               <ProtectedRoute allowedRoles={["admin", "manager"]}>
                 <AdminDashboard />
