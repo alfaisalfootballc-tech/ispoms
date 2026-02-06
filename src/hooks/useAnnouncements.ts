@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 export type AnnouncementPriority = "low" | "normal" | "high" | "urgent";
 
@@ -250,6 +251,30 @@ export function useAnnouncements() {
       queryClient.invalidateQueries({ queryKey: ["announcements"] });
     },
   });
+
+  // Realtime subscription for announcements
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel("announcements-realtime")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "announcements",
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["announcements"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, queryClient]);
 
   // Filter helpers
   const publishedAnnouncements = announcementsQuery.data?.filter(
