@@ -570,6 +570,66 @@ export type Database = {
           },
         ]
       }
+      employees: {
+        Row: {
+          created_at: string
+          department_id: string | null
+          employee_number: string | null
+          hire_date: string | null
+          id: string
+          job_title: string | null
+          location: string | null
+          phone: string | null
+          profile_id: string | null
+          status: Database["public"]["Enums"]["employee_status"]
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          department_id?: string | null
+          employee_number?: string | null
+          hire_date?: string | null
+          id?: string
+          job_title?: string | null
+          location?: string | null
+          phone?: string | null
+          profile_id?: string | null
+          status?: Database["public"]["Enums"]["employee_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          department_id?: string | null
+          employee_number?: string | null
+          hire_date?: string | null
+          id?: string
+          job_title?: string | null
+          location?: string | null
+          phone?: string | null
+          profile_id?: string | null
+          status?: Database["public"]["Enums"]["employee_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employees_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employees_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leave_balances: {
         Row: {
           created_at: string
@@ -903,6 +963,7 @@ export type Database = {
       app_role: "admin" | "manager" | "staff"
       attendance_status: "present" | "late" | "remote" | "half_day" | "absent"
       document_status: "draft" | "published" | "archived"
+      employee_status: "active" | "on_leave" | "inactive"
       leave_status: "pending" | "approved" | "rejected" | "cancelled"
       task_priority: "low" | "medium" | "high" | "urgent"
       task_status: "todo" | "in_progress" | "in_review" | "completed"
@@ -1038,6 +1099,7 @@ export const Constants = {
       app_role: ["admin", "manager", "staff"],
       attendance_status: ["present", "late", "remote", "half_day", "absent"],
       document_status: ["draft", "published", "archived"],
+      employee_status: ["active", "on_leave", "inactive"],
       leave_status: ["pending", "approved", "rejected", "cancelled"],
       task_priority: ["low", "medium", "high", "urgent"],
       task_status: ["todo", "in_progress", "in_review", "completed"],
