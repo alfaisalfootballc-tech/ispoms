@@ -284,10 +284,38 @@
      return true;
    };
  
-   useEffect(() => {
-     fetchTodayRecord();
-     fetchAttendanceHistory();
-   }, [fetchTodayRecord, fetchAttendanceHistory]);
+  // Initial data fetch
+  useEffect(() => {
+    fetchTodayRecord();
+    fetchAttendanceHistory();
+  }, [fetchTodayRecord, fetchAttendanceHistory]);
+
+  // Realtime subscription for attendance updates
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel("attendance-realtime-updates")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "attendance_records",
+        },
+        () => {
+          // Refresh data when any attendance record changes
+          fetchTodayRecord();
+          fetchAttendanceHistory();
+          fetchTeamAttendance();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, fetchTodayRecord, fetchAttendanceHistory, fetchTeamAttendance]);
  
    return {
      todayRecord,
