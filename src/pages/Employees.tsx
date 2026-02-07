@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEmployees } from "@/hooks/useEmployees";
+import { CreateEmployeeDialog } from "@/components/employees/CreateEmployeeDialog";
 import { 
   Search, 
-  Plus, 
   Filter, 
   MoreHorizontal, 
   Mail, 
@@ -54,10 +54,7 @@ export default function Employees() {
             <h1 className="text-2xl font-bold tracking-tight">Employees</h1>
             <p className="text-muted-foreground">Manage your team members and their information</p>
           </div>
-          <Button variant="default">
-            <Plus className="w-4 h-4" />
-            Add Employee
-          </Button>
+          <CreateEmployeeDialog />
         </div>
 
         {/* Filters & Search */}
