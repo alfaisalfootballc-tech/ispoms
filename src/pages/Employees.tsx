@@ -2,8 +2,15 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEmployees } from "@/hooks/useEmployees";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useEmployees, Employee } from "@/hooks/useEmployees";
 import { CreateEmployeeDialog } from "@/components/employees/CreateEmployeeDialog";
+import { EditEmployeeDialog } from "@/components/employees/EditEmployeeDialog";
 import { 
   Search, 
   Filter, 
@@ -11,7 +18,8 @@ import {
   Mail, 
   Phone,
   Building2,
-  MapPin
+  MapPin,
+  Pencil
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -25,6 +33,7 @@ const statusStyles = {
 export default function Employees() {
   const { employees, stats, isLoading } = useEmployees();
   const [searchQuery, setSearchQuery] = useState("");
+  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
 
   const filteredEmployees = employees.filter((employee) => {
     const searchLower = searchQuery.toLowerCase();
@@ -133,9 +142,19 @@ export default function Employees() {
                       <p className="text-sm text-muted-foreground">{employee.job_title || "No title"}</p>
                     </div>
                   </div>
-                  <button className="opacity-0 group-hover:opacity-100 p-2 rounded-lg hover:bg-muted transition-all">
-                    <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
-                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="opacity-0 group-hover:opacity-100 p-2 rounded-lg hover:bg-muted transition-all">
+                        <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => setEditingEmployee(employee)}>
+                        <Pencil className="w-4 h-4 mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
 
                 <div className="space-y-2 text-sm">
@@ -176,6 +195,15 @@ export default function Employees() {
               </div>
             ))}
           </div>
+        )}
+
+        {/* Edit Employee Dialog */}
+        {editingEmployee && (
+          <EditEmployeeDialog
+            employee={editingEmployee}
+            open={!!editingEmployee}
+            onOpenChange={(open) => !open && setEditingEmployee(null)}
+          />
         )}
       </div>
     </DashboardLayout>
