@@ -119,12 +119,12 @@ export function CreateEmployeeDialog({ children }: CreateEmployeeDialogProps) {
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
               <Label>Link to User Profile</Label>
-              <Select value={profileId} onValueChange={setProfileId}>
+              <Select value={profileId} onValueChange={(v) => setProfileId(v === "none" ? "" : v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a user profile (optional)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">No profile</SelectItem>
+                  <SelectItem value="none">No profile</SelectItem>
                   {profiles?.map((profile) => (
                     <SelectItem key={profile.id} value={profile.id}>
                       {profile.first_name} {profile.last_name} ({profile.email})
@@ -160,12 +160,12 @@ export function CreateEmployeeDialog({ children }: CreateEmployeeDialogProps) {
 
             <div className="space-y-2">
               <Label>Department</Label>
-              <Select value={departmentId} onValueChange={setDepartmentId}>
+              <Select value={departmentId || "none"} onValueChange={(v) => setDepartmentId(v === "none" ? "" : v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select department" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">No department</SelectItem>
+                  <SelectItem value="none">No department</SelectItem>
                   {departments?.map((dept) => (
                     <SelectItem key={dept.id} value={dept.id}>
                       {dept.name}

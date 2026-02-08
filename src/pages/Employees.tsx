@@ -144,7 +144,10 @@ export default function Employees() {
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="opacity-0 group-hover:opacity-100 p-2 rounded-lg hover:bg-muted transition-all">
+                      <button 
+                        className="p-2 rounded-lg hover:bg-muted focus:bg-muted transition-all focus:outline-none focus:ring-2 focus:ring-ring sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100"
+                        aria-label="Employee options"
+                      >
                         <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
                       </button>
                     </DropdownMenuTrigger>
