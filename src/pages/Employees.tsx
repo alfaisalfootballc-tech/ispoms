@@ -6,11 +6,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useEmployees, Employee } from "@/hooks/useEmployees";
 import { CreateEmployeeDialog } from "@/components/employees/CreateEmployeeDialog";
 import { EditEmployeeDialog } from "@/components/employees/EditEmployeeDialog";
+import { DeleteEmployeeDialog } from "@/components/employees/DeleteEmployeeDialog";
 import { 
   Search, 
   Filter, 
@@ -19,7 +21,8 @@ import {
   Phone,
   Building2,
   MapPin,
-  Pencil
+  Pencil,
+  Trash2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -31,9 +34,10 @@ const statusStyles = {
 };
 
 export default function Employees() {
-  const { employees, stats, isLoading } = useEmployees();
+  const { employees, stats, isLoading, deleteEmployee, isDeleting } = useEmployees();
   const [searchQuery, setSearchQuery] = useState("");
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [deletingEmployee, setDeletingEmployee] = useState<Employee | null>(null);
 
   const filteredEmployees = employees.filter((employee) => {
     const searchLower = searchQuery.toLowerCase();
@@ -156,6 +160,14 @@ export default function Employees() {
                         <Pencil className="w-4 h-4 mr-2" />
                         Edit
                       </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        onClick={() => setDeletingEmployee(employee)}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -208,6 +220,20 @@ export default function Employees() {
             onOpenChange={(open) => !open && setEditingEmployee(null)}
           />
         )}
+
+        {/* Delete Employee Dialog */}
+        <DeleteEmployeeDialog
+          employee={deletingEmployee}
+          open={!!deletingEmployee}
+          onOpenChange={(open) => !open && setDeletingEmployee(null)}
+          onConfirm={async () => {
+            if (deletingEmployee) {
+              await deleteEmployee(deletingEmployee.id);
+              setDeletingEmployee(null);
+            }
+          }}
+          isDeleting={isDeleting}
+        />
       </div>
     </DashboardLayout>
   );
