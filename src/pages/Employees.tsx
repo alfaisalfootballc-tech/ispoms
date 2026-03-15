@@ -42,8 +42,20 @@ const statusStyles = {
 export default function Employees() {
   const { employees, stats, isLoading, deleteEmployee, isDeleting } = useEmployees();
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [departmentFilter, setDepartmentFilter] = useState<string>("all");
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [deletingEmployee, setDeletingEmployee] = useState<Employee | null>(null);
+
+  const departments = useMemo(() => {
+    const depts = new Map<string, string>();
+    employees.forEach((e) => {
+      if (e.department?.id && e.department?.name) {
+        depts.set(e.department.id, e.department.name);
+      }
+    });
+    return Array.from(depts, ([id, name]) => ({ id, name }));
+  }, [employees]);
 
   const filteredEmployees = employees.filter((employee) => {
     const searchLower = searchQuery.toLowerCase();
