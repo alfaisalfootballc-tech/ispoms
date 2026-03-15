@@ -13,9 +13,15 @@ import { useEmployees, Employee } from "@/hooks/useEmployees";
 import { CreateEmployeeDialog } from "@/components/employees/CreateEmployeeDialog";
 import { EditEmployeeDialog } from "@/components/employees/EditEmployeeDialog";
 import { DeleteEmployeeDialog } from "@/components/employees/DeleteEmployeeDialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { 
   Search, 
-  Filter, 
   MoreHorizontal, 
   Mail, 
   Phone,
@@ -25,7 +31,7 @@ import {
   Trash2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 const statusStyles = {
   active: "bg-success/10 text-success",
