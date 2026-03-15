@@ -58,7 +58,12 @@ export default function Employees() {
   }, [employees]);
 
   const filteredEmployees = employees.filter((employee) => {
+    if (statusFilter !== "all" && employee.status !== statusFilter) return false;
+    if (departmentFilter !== "all" && employee.department?.id !== departmentFilter) return false;
+
     const searchLower = searchQuery.toLowerCase();
+    if (!searchLower) return true;
+
     const fullName = `${employee.profile?.first_name || ""} ${employee.profile?.last_name || ""}`.toLowerCase();
     const email = employee.profile?.email?.toLowerCase() || "";
     const department = employee.department?.name?.toLowerCase() || "";
@@ -100,10 +105,29 @@ export default function Employees() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button variant="secondary">
-            <Filter className="w-4 h-4" />
-            Filters
-          </Button>
+          <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <Building2 className="w-4 h-4 mr-2 text-muted-foreground" />
+              <SelectValue placeholder="Department" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Departments</SelectItem>
+              {departments.map((dept) => (
+                <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-full sm:w-[160px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="on_leave">On Leave</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Stats - Live from database */}
