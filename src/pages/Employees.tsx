@@ -13,9 +13,15 @@ import { useEmployees, Employee } from "@/hooks/useEmployees";
 import { CreateEmployeeDialog } from "@/components/employees/CreateEmployeeDialog";
 import { EditEmployeeDialog } from "@/components/employees/EditEmployeeDialog";
 import { DeleteEmployeeDialog } from "@/components/employees/DeleteEmployeeDialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { 
   Search, 
-  Filter, 
   MoreHorizontal, 
   Mail, 
   Phone,
@@ -25,7 +31,7 @@ import {
   Trash2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 const statusStyles = {
   active: "bg-success/10 text-success",
@@ -36,11 +42,28 @@ const statusStyles = {
 export default function Employees() {
   const { employees, stats, isLoading, deleteEmployee, isDeleting } = useEmployees();
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [departmentFilter, setDepartmentFilter] = useState<string>("all");
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [deletingEmployee, setDeletingEmployee] = useState<Employee | null>(null);
 
+  const departments = useMemo(() => {
+    const depts = new Map<string, string>();
+    employees.forEach((e) => {
+      if (e.department?.id && e.department?.name) {
+        depts.set(e.department.id, e.department.name);
+      }
+    });
+    return Array.from(depts, ([id, name]) => ({ id, name }));
+  }, [employees]);
+
   const filteredEmployees = employees.filter((employee) => {
+    if (statusFilter !== "all" && employee.status !== statusFilter) return false;
+    if (departmentFilter !== "all" && employee.department?.id !== departmentFilter) return false;
+
     const searchLower = searchQuery.toLowerCase();
+    if (!searchLower) return true;
+
     const fullName = `${employee.profile?.first_name || ""} ${employee.profile?.last_name || ""}`.toLowerCase();
     const email = employee.profile?.email?.toLowerCase() || "";
     const department = employee.department?.name?.toLowerCase() || "";
@@ -82,10 +105,29 @@ export default function Employees() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button variant="secondary">
-            <Filter className="w-4 h-4" />
-            Filters
-          </Button>
+          <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <Building2 className="w-4 h-4 mr-2 text-muted-foreground" />
+              <SelectValue placeholder="Department" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Departments</SelectItem>
+              {departments.map((dept) => (
+                <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-full sm:w-[160px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="on_leave">On Leave</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Stats - Live from database */}
