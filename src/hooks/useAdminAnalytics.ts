@@ -20,7 +20,7 @@ interface AnalyticsData {
 }
 
 export function useAdminAnalytics() {
-  const { isAdmin, isManager } = useAuth();
+  const { isAdmin } = useAuth();
 
   return useQuery({
     queryKey: ["admin-analytics"],
@@ -117,7 +117,7 @@ export function useAdminAnalytics() {
         recentActivity: recentActivity.slice(0, 10),
       };
     },
-    enabled: isAdmin || isManager,
+    enabled: isAdmin,
     staleTime: 30000, // Cache for 30 seconds
   });
 }

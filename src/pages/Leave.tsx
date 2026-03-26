@@ -13,7 +13,7 @@ import { useLeaveManagement } from "@/hooks/useLeaveManagement";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Leave() {
-  const { user, isAdmin, isManager } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { 
     leaveTypes, 
     balances, 
@@ -144,7 +144,7 @@ export default function Leave() {
                 )}
               </TabsTrigger>
             )}
-            {(isAdmin || isManager) && (
+            {isAdmin && (
               <TabsTrigger value="all-requests">All Requests</TabsTrigger>
             )}
           </TabsList>
@@ -207,7 +207,7 @@ export default function Leave() {
             </TabsContent>
           )}
 
-          {(isAdmin || isManager) && (
+          {isAdmin && (
             <TabsContent value="all-requests" className="mt-4">
               {isLoading ? (
                 <div className="space-y-3">

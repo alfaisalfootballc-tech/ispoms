@@ -7,8 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { History, Users } from "lucide-react";
 
 export default function Attendance() {
-  const { role } = useAuth();
-  const isManagerOrAdmin = role === "manager" || role === "admin";
+  const { isAdmin } = useAuth();
+  const isManagerOrAdmin = isAdmin;
 
   return (
     <DashboardLayout>

@@ -37,7 +37,7 @@ export interface Department {
 }
 
 export function useAnnouncements() {
-  const { user, isAdmin, isManager } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -287,7 +287,7 @@ export function useAnnouncements() {
 
   const unreadCount = publishedAnnouncements.filter((a) => !a.is_read).length;
 
-  const canCreate = isAdmin || isManager;
+  const canCreate = isAdmin;
 
   return {
     announcements: announcementsQuery.data || [],

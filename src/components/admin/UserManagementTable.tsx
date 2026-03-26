@@ -23,9 +23,9 @@ import { Loader2, Search, Shield, ShieldCheck, User } from "lucide-react";
 import { format } from "date-fns";
 
 const roleConfig: Record<AppRole, { label: string; icon: React.ElementType; class: string }> = {
-  admin: { label: "Admin", icon: ShieldCheck, class: "bg-primary/10 text-primary" },
-  manager: { label: "Manager", icon: Shield, class: "bg-warning/10 text-warning" },
-  staff: { label: "Staff", icon: User, class: "bg-muted text-muted-foreground" },
+  super_admin: { label: "Super Admin", icon: ShieldCheck, class: "bg-destructive/10 text-destructive" },
+  admin: { label: "Admin", icon: Shield, class: "bg-primary/10 text-primary" },
+  employee: { label: "Employee", icon: User, class: "bg-muted text-muted-foreground" },
 };
 
 export function UserManagementTable() {
@@ -73,16 +73,16 @@ export function UserManagementTable() {
           <p className="text-sm text-muted-foreground">Total Users</p>
         </div>
         <div className="bg-card border border-border rounded-lg p-4">
+          <p className="text-2xl font-bold text-destructive">{stats.superAdmins}</p>
+          <p className="text-sm text-muted-foreground">Super Admins</p>
+        </div>
+        <div className="bg-card border border-border rounded-lg p-4">
           <p className="text-2xl font-bold text-primary">{stats.admins}</p>
           <p className="text-sm text-muted-foreground">Admins</p>
         </div>
         <div className="bg-card border border-border rounded-lg p-4">
-          <p className="text-2xl font-bold text-warning">{stats.managers}</p>
-          <p className="text-sm text-muted-foreground">Managers</p>
-        </div>
-        <div className="bg-card border border-border rounded-lg p-4">
-          <p className="text-2xl font-bold text-muted-foreground">{stats.staff}</p>
-          <p className="text-sm text-muted-foreground">Staff</p>
+          <p className="text-2xl font-bold text-muted-foreground">{stats.employees}</p>
+          <p className="text-sm text-muted-foreground">Employees</p>
         </div>
       </div>
 
@@ -106,9 +106,9 @@ export function UserManagementTable() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Roles</SelectItem>
+            <SelectItem value="super_admin">Super Admins</SelectItem>
             <SelectItem value="admin">Admins</SelectItem>
-            <SelectItem value="manager">Managers</SelectItem>
-            <SelectItem value="staff">Staff</SelectItem>
+            <SelectItem value="employee">Employees</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -133,7 +133,7 @@ export function UserManagementTable() {
               </TableRow>
             ) : (
               filteredUsers.map((user) => {
-                const role = user.role?.role || "staff";
+                const role = user.role?.role || "employee";
                 const roleInfo = roleConfig[role];
                 const RoleIcon = roleInfo.icon;
 
@@ -161,16 +161,16 @@ export function UserManagementTable() {
                         onValueChange={(v) => handleRoleChange(user.id, v as AppRole)}
                         disabled={isUpdating}
                       >
-                        <SelectTrigger className="w-[130px] h-8">
+                        <SelectTrigger className="w-[150px] h-8">
                           <div className="flex items-center gap-2">
                             <RoleIcon className="h-3.5 w-3.5" />
                             <SelectValue />
                           </div>
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="super_admin">Super Admin</SelectItem>
                           <SelectItem value="admin">Admin</SelectItem>
-                          <SelectItem value="manager">Manager</SelectItem>
-                          <SelectItem value="staff">Staff</SelectItem>
+                          <SelectItem value="employee">Employee</SelectItem>
                         </SelectContent>
                       </Select>
                     </TableCell>
