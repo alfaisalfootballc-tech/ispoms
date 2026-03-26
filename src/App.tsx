@@ -58,7 +58,7 @@ const App = () => (
             
             {/* Placeholder routes */}
             <Route path="/departments" element={
-              <ProtectedRoute allowedRoles={["admin", "manager"]}>
+              <ProtectedRoute allowedRoles={["super_admin", "admin"]}>
                 <Departments />
               </ProtectedRoute>
             } />
@@ -88,12 +88,12 @@ const App = () => (
              </ProtectedRoute>
            } />
             <Route path="/reports" element={
-              <ProtectedRoute allowedRoles={["admin", "manager"]}>
+              <ProtectedRoute allowedRoles={["super_admin", "admin"]}>
                 <AdminDashboard />
               </ProtectedRoute>
             } />
             <Route path="/admin" element={
-              <ProtectedRoute allowedRoles={["admin", "manager"]}>
+              <ProtectedRoute allowedRoles={["super_admin", "admin"]}>
                 <AdminDashboard />
               </ProtectedRoute>
             } />

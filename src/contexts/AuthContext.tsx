@@ -3,7 +3,7 @@ import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-export type AppRole = "admin" | "manager" | "staff";
+export type AppRole = "super_admin" | "admin" | "employee";
 
 interface Profile {
   id: string;
@@ -26,9 +26,9 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
   updatePassword: (newPassword: string) => Promise<{ error: Error | null }>;
+  isSuperAdmin: boolean;
   isAdmin: boolean;
-  isManager: boolean;
-  isStaff: boolean;
+  isEmployee: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -101,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (roleError) {
         console.error("Error fetching role:", roleError);
       } else {
-        setRole(roleData?.role as AppRole ?? "staff");
+        setRole(roleData?.role as AppRole ?? "employee");
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -242,9 +242,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signOut,
     resetPassword,
     updatePassword,
-    isAdmin: role === "admin",
-    isManager: role === "manager",
-    isStaff: role === "staff",
+    isSuperAdmin: role === "super_admin",
+    isAdmin: role === "admin" || role === "super_admin",
+    isEmployee: role === "employee",
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -9,7 +9,7 @@ export type UserWithRole = Tables<"profiles"> & {
   department?: Tables<"departments"> | null;
 };
 
-export type AppRole = "admin" | "manager" | "staff";
+export type AppRole = "super_admin" | "admin" | "employee";
 
 export function useUserManagement() {
   const { isAdmin } = useAuth();
@@ -113,9 +113,9 @@ export function useUserManagement() {
   // Stats
   const stats = {
     total: usersQuery.data?.length || 0,
+    superAdmins: usersQuery.data?.filter((u) => u.role?.role === "super_admin").length || 0,
     admins: usersQuery.data?.filter((u) => u.role?.role === "admin").length || 0,
-    managers: usersQuery.data?.filter((u) => u.role?.role === "manager").length || 0,
-    staff: usersQuery.data?.filter((u) => u.role?.role === "staff").length || 0,
+    employees: usersQuery.data?.filter((u) => u.role?.role === "employee").length || 0,
   };
 
   return {
