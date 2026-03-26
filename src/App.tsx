@@ -19,7 +19,8 @@ import Tasks from "./pages/Tasks";
 import AdminDashboard from "./pages/AdminDashboard";
 import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
- import Attendance from "./pages/Attendance";
+import Attendance from "./pages/Attendance";
+import Departments from "./pages/Departments";
 
 const queryClient = new QueryClient();
 
@@ -57,8 +58,8 @@ const App = () => (
             
             {/* Placeholder routes */}
             <Route path="/departments" element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <Index />
+              <ProtectedRoute allowedRoles={["admin", "manager"]}>
+                <Departments />
               </ProtectedRoute>
             } />
             <Route path="/documents" element={
