@@ -54,7 +54,7 @@ export interface LeaveRequest {
 }
 
 export function useLeaveManagement() {
-  const { user, isAdmin, isManager } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const currentYear = new Date().getFullYear();
@@ -273,7 +273,7 @@ export function useLeaveManagement() {
   };
 
   // Check if user can approve requests
-  const canApprove = isAdmin || isManager;
+  const canApprove = isAdmin;
 
   // Filter requests by status
   const pendingRequests = requestsQuery.data?.filter((r) => r.status === "pending") || [];

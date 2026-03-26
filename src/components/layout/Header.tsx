@@ -55,9 +55,9 @@ export function Header({ onMenuClick }: HeaderProps) {
 
   const getRoleBadgeVariant = () => {
     switch (role) {
-      case "admin":
+      case "super_admin":
         return "destructive";
-      case "manager":
+      case "admin":
         return "default";
       default:
         return "secondary";
@@ -194,7 +194,7 @@ export function Header({ onMenuClick }: HeaderProps) {
               <div className="hidden md:flex flex-col items-start">
                 <span className="text-sm font-medium">{getDisplayName()}</span>
                 <Badge variant={getRoleBadgeVariant()} className="text-[9px] px-1.5 py-0 h-4 uppercase">
-                  {role || "staff"}
+                  {role === "super_admin" ? "Super Admin" : role || "employee"}
                 </Badge>
               </div>
               <ChevronDown className="w-4 h-4 text-muted-foreground hidden md:block" />

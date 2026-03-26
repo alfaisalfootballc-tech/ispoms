@@ -21,11 +21,11 @@ import { RecentActivityList } from "@/components/admin/RecentActivityList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function AdminDashboard() {
-  const { isAdmin, isManager, isLoading: authLoading } = useAuth();
+  const { isAdmin, isLoading: authLoading } = useAuth();
   const { data: analytics, isLoading, error } = useAdminAnalytics();
 
   // Redirect non-admin/manager users
-  if (!authLoading && !isAdmin && !isManager) {
+  if (!authLoading && !isAdmin) {
     return <Navigate to="/unauthorized" replace />;
   }
 

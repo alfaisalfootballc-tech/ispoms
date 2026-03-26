@@ -48,11 +48,11 @@ const bottomNavItems: NavItem[] = [
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
-  const { isAdmin, isManager, signOut } = useAuth();
+  const { isAdmin, signOut } = useAuth();
 
-  // Filter nav items based on role
+  // Filter nav items based on role (isAdmin includes super_admin)
   const filteredNavItems = navItems.filter(
-    (item) => !item.adminOnly || isAdmin || isManager
+    (item) => !item.adminOnly || isAdmin
   );
 
   return (
