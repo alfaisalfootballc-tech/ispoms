@@ -960,7 +960,7 @@ export type Database = {
     Enums: {
       access_level: "view" | "edit" | "admin"
       announcement_priority: "low" | "normal" | "high" | "urgent"
-      app_role: "admin" | "manager" | "staff"
+      app_role: "super_admin" | "admin" | "employee"
       attendance_status: "present" | "late" | "remote" | "half_day" | "absent"
       document_status: "draft" | "published" | "archived"
       employee_status: "active" | "on_leave" | "inactive"
@@ -1096,7 +1096,7 @@ export const Constants = {
     Enums: {
       access_level: ["view", "edit", "admin"],
       announcement_priority: ["low", "normal", "high", "urgent"],
-      app_role: ["admin", "manager", "staff"],
+      app_role: ["super_admin", "admin", "employee"],
       attendance_status: ["present", "late", "remote", "half_day", "absent"],
       document_status: ["draft", "published", "archived"],
       employee_status: ["active", "on_leave", "inactive"],
