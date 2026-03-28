@@ -321,6 +321,7 @@ export function useLeaveManagement() {
     isLoading: leaveTypesQuery.isLoading || balancesQuery.isLoading || requestsQuery.isLoading,
     submitRequest,
     reviewRequest,
+    referToSuperAdmin,
     cancelRequest,
     deleteRequest,
     getBalance,
