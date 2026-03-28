@@ -171,6 +171,39 @@ export function useLeaveManagement() {
     },
   });
 
+  // Refer request to super admin
+  const referToSuperAdmin = useMutation({
+    mutationFn: async ({ requestId, notes }: { requestId: string; notes?: string }) => {
+      if (!user) throw new Error("Not authenticated");
+
+      const { error } = await supabase
+        .from("leave_requests")
+        .update({
+          referred_to_super_admin: true,
+          referred_by: user.id,
+          referred_at: new Date().toISOString(),
+          review_notes: notes || null,
+        } as any)
+        .eq("id", requestId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leave-requests"] });
+      toast({
+        title: "Request referred",
+        description: "The leave request has been referred to Super Admin for review.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Referral failed",
+        description: error.message,
+      });
+    },
+  });
+
   // Approve/Reject request
   const reviewRequest = useMutation({
     mutationFn: async ({
@@ -288,6 +321,7 @@ export function useLeaveManagement() {
     isLoading: leaveTypesQuery.isLoading || balancesQuery.isLoading || requestsQuery.isLoading,
     submitRequest,
     reviewRequest,
+    referToSuperAdmin,
     cancelRequest,
     deleteRequest,
     getBalance,

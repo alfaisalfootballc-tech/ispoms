@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { format } from "date-fns";
-import { Check, X, Calendar, Clock, User } from "lucide-react";
+import { Check, X, Calendar, Clock, User, ArrowUpRight } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { LeaveRequest, useLeaveManagement } from "@/hooks/useLeaveManagement";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ReviewRequestDialogProps {
   request: LeaveRequest;
@@ -23,8 +24,13 @@ interface ReviewRequestDialogProps {
 }
 
 export function ReviewRequestDialog({ request, open, onOpenChange }: ReviewRequestDialogProps) {
-  const { reviewRequest } = useLeaveManagement();
+  const { reviewRequest, referToSuperAdmin } = useLeaveManagement();
+  const { role } = useAuth();
   const [notes, setNotes] = useState("");
+
+  const isAdmin = role === "admin";
+  const isSuperAdmin = role === "super_admin";
+  const isReferred = (request as any).referred_to_super_admin;
 
   const userName = request.user
     ? `${request.user.first_name || ""} ${request.user.last_name || ""}`.trim() ||
@@ -51,18 +57,34 @@ export function ReviewRequestDialog({ request, open, onOpenChange }: ReviewReque
     onOpenChange(false);
   };
 
+  const handleRefer = async () => {
+    await referToSuperAdmin.mutateAsync({
+      requestId: request.id,
+      notes: notes.trim() || undefined,
+    });
+    setNotes("");
+    onOpenChange(false);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
           <DialogTitle>Review Leave Request</DialogTitle>
           <DialogDescription>
-            Approve or reject this leave request
+            Approve, reject{isAdmin && !isReferred ? ", or refer to Super Admin" : ""} this leave request
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Request Details */}
+          {isReferred && (
+            <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+              <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
+                ⚡ Referred to Super Admin for review
+              </p>
+            </div>
+          )}
+
           <div className="p-4 bg-muted rounded-lg space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -113,7 +135,6 @@ export function ReviewRequestDialog({ request, open, onOpenChange }: ReviewReque
             )}
           </div>
 
-          {/* Review Notes */}
           <div className="space-y-2">
             <Label htmlFor="review-notes">Review Notes (optional)</Label>
             <Textarea
@@ -126,13 +147,20 @@ export function ReviewRequestDialog({ request, open, onOpenChange }: ReviewReque
           </div>
         </div>
 
-        <DialogFooter className="gap-2 sm:gap-0">
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-          >
+        <DialogFooter className="flex-col gap-2 sm:flex-row">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
+          {isAdmin && !isReferred && (
+            <Button
+              variant="secondary"
+              onClick={handleRefer}
+              disabled={referToSuperAdmin.isPending}
+            >
+              <ArrowUpRight className="w-4 h-4 mr-2" />
+              Refer to Super Admin
+            </Button>
+          )}
           <Button
             variant="destructive"
             onClick={handleReject}

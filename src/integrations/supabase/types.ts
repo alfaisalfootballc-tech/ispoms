@@ -689,6 +689,9 @@ export type Database = {
           id: string
           leave_type_id: string
           reason: string | null
+          referred_at: string | null
+          referred_by: string | null
+          referred_to_super_admin: boolean | null
           review_notes: string | null
           reviewed_at: string | null
           reviewed_by: string | null
@@ -704,6 +707,9 @@ export type Database = {
           id?: string
           leave_type_id: string
           reason?: string | null
+          referred_at?: string | null
+          referred_by?: string | null
+          referred_to_super_admin?: boolean | null
           review_notes?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -719,6 +725,9 @@ export type Database = {
           id?: string
           leave_type_id?: string
           reason?: string | null
+          referred_at?: string | null
+          referred_by?: string | null
+          referred_to_super_admin?: boolean | null
           review_notes?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -733,6 +742,13 @@ export type Database = {
             columns: ["leave_type_id"]
             isOneToOne: false
             referencedRelation: "leave_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leave_requests_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
