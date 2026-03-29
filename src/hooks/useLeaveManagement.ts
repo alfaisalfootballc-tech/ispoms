@@ -39,9 +39,22 @@ export interface LeaveRequest {
   reviewed_by: string | null;
   reviewed_at: string | null;
   review_notes: string | null;
+  referred_to_super_admin: boolean | null;
+  referred_by: string | null;
+  referred_at: string | null;
   created_at: string;
   updated_at: string;
   leave_type?: LeaveType;
+  user?: {
+    first_name: string | null;
+    last_name: string | null;
+    email: string;
+  };
+  reviewer?: {
+    first_name: string | null;
+    last_name: string | null;
+  };
+}
   user?: {
     first_name: string | null;
     last_name: string | null;
