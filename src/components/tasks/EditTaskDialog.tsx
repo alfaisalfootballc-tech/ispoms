@@ -41,8 +41,8 @@ export function EditTaskDialog({ task, open, onOpenChange }: EditTaskDialogProps
   const [dueDate, setDueDate] = useState<Date | undefined>(
     task.due_date ? new Date(task.due_date) : undefined
   );
-  const [assignedTo, setAssignedTo] = useState(task.assigned_to || "");
-  const [departmentId, setDepartmentId] = useState(task.department_id || "");
+  const [assignedTo, setAssignedTo] = useState(task.assigned_to || "none");
+  const [departmentId, setDepartmentId] = useState(task.department_id || "none");
   const [tags, setTags] = useState(task.tags?.join(", ") || "");
 
   const { updateTask, isUpdating } = useTasks();
@@ -82,8 +82,8 @@ export function EditTaskDialog({ task, open, onOpenChange }: EditTaskDialogProps
       priority,
       status,
       due_date: dueDate ? format(dueDate, "yyyy-MM-dd") : null,
-      assigned_to: assignedTo || null,
-      department_id: departmentId || null,
+      assigned_to: assignedTo === "none" ? null : assignedTo || null,
+      department_id: departmentId === "none" ? null : departmentId || null,
       tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
     });
 
@@ -189,7 +189,7 @@ export function EditTaskDialog({ task, open, onOpenChange }: EditTaskDialogProps
                   <SelectValue placeholder="Select team member" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Unassigned</SelectItem>
+                  <SelectItem value="none">Unassigned</SelectItem>
                   {users?.map((user) => (
                     <SelectItem key={user.id} value={user.id}>
                       {user.first_name} {user.last_name}
@@ -206,7 +206,7 @@ export function EditTaskDialog({ task, open, onOpenChange }: EditTaskDialogProps
                   <SelectValue placeholder="Select department" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">No department</SelectItem>
+                  <SelectItem value="none">No department</SelectItem>
                   {departments?.map((dept) => (
                     <SelectItem key={dept.id} value={dept.id}>
                       {dept.name}
