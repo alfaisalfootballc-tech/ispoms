@@ -30,7 +30,7 @@ export function ReviewRequestDialog({ request, open, onOpenChange }: ReviewReque
 
   const isAdmin = role === "admin";
   const isSuperAdmin = role === "super_admin";
-  const isReferred = (request as any).referred_to_super_admin;
+  const isReferred = request.referred_to_super_admin;
 
   const userName = request.user
     ? `${request.user.first_name || ""} ${request.user.last_name || ""}`.trim() ||
