@@ -183,7 +183,7 @@ export function useLeaveManagement() {
           referred_by: user.id,
           referred_at: new Date().toISOString(),
           review_notes: notes || null,
-        } as any)
+        })
         .eq("id", requestId);
 
       if (error) throw error;

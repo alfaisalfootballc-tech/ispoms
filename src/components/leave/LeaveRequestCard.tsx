@@ -116,7 +116,7 @@ export function LeaveRequestCard({ request, showUser = false }: LeaveRequestCard
                     {getStatusIcon(request.status)}
                     {request.status}
                   </Badge>
-                  {(request as any).referred_to_super_admin && (
+                  {request.referred_to_super_admin && (
                     <Badge variant="outline" className="gap-1 text-xs border-amber-500 text-amber-600">
                       Referred to Super Admin
                     </Badge>
