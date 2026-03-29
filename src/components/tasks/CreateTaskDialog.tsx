@@ -38,8 +38,8 @@ export function CreateTaskDialog({ children }: CreateTaskDialogProps) {
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<TaskPriority>("medium");
   const [dueDate, setDueDate] = useState<Date>();
-  const [assignedTo, setAssignedTo] = useState<string>("");
-  const [departmentId, setDepartmentId] = useState<string>("");
+  const [assignedTo, setAssignedTo] = useState<string>("none");
+  const [departmentId, setDepartmentId] = useState<string>("none");
   const [tags, setTags] = useState("");
 
   const { createTask, isCreating } = useTasks();
@@ -77,8 +77,8 @@ export function CreateTaskDialog({ children }: CreateTaskDialogProps) {
       description: description.trim() || null,
       priority,
       due_date: dueDate ? format(dueDate, "yyyy-MM-dd") : null,
-      assigned_to: assignedTo || null,
-      department_id: departmentId || null,
+      assigned_to: assignedTo === "none" ? null : assignedTo || null,
+      department_id: departmentId === "none" ? null : departmentId || null,
       tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
     });
 
@@ -91,8 +91,8 @@ export function CreateTaskDialog({ children }: CreateTaskDialogProps) {
     setDescription("");
     setPriority("medium");
     setDueDate(undefined);
-    setAssignedTo("");
-    setDepartmentId("");
+    setAssignedTo("none");
+    setDepartmentId("none");
     setTags("");
   };
 
@@ -188,7 +188,7 @@ export function CreateTaskDialog({ children }: CreateTaskDialogProps) {
                   <SelectValue placeholder="Select team member" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Unassigned</SelectItem>
+                  <SelectItem value="none">Unassigned</SelectItem>
                   {users?.map((user) => (
                     <SelectItem key={user.id} value={user.id}>
                       {user.first_name} {user.last_name}
@@ -205,7 +205,7 @@ export function CreateTaskDialog({ children }: CreateTaskDialogProps) {
                   <SelectValue placeholder="Select department" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">No department</SelectItem>
+                  <SelectItem value="none">No department</SelectItem>
                   {departments?.map((dept) => (
                     <SelectItem key={dept.id} value={dept.id}>
                       {dept.name}
