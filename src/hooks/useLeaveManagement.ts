@@ -55,16 +55,6 @@ export interface LeaveRequest {
     last_name: string | null;
   };
 }
-  user?: {
-    first_name: string | null;
-    last_name: string | null;
-    email: string;
-  };
-  reviewer?: {
-    first_name: string | null;
-    last_name: string | null;
-  };
-}
 
 export function useLeaveManagement() {
   const { user, isAdmin } = useAuth();
