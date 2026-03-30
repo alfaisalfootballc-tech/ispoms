@@ -14,10 +14,11 @@ import {
   Building2,
   Shield,
   MessageCircle,
-   Clock,
+  Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAnnouncements } from "@/hooks/useAnnouncements";
 
 interface NavItem {
   icon: React.ElementType;
@@ -27,28 +28,29 @@ interface NavItem {
   adminOnly?: boolean;
 }
 
-const navItems: NavItem[] = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-  { icon: Users, label: "Employees", path: "/employees" },
-  { icon: Building2, label: "Departments", path: "/departments", adminOnly: true },
-  { icon: ClipboardList, label: "Tasks", path: "/tasks" },
-  { icon: MessageCircle, label: "Messages", path: "/messages" },
-   { icon: Clock, label: "Attendance", path: "/attendance" },
-  { icon: FileText, label: "Documents", path: "/documents" },
-  { icon: Calendar, label: "Leave Management", path: "/leave" },
-  { icon: Megaphone, label: "Announcements", path: "/announcements", badge: 3 },
-  { icon: BarChart3, label: "Reports", path: "/reports", adminOnly: true },
-  { icon: Shield, label: "Admin", path: "/admin", adminOnly: true },
-];
-
-const bottomNavItems: NavItem[] = [
-  { icon: Settings, label: "Settings", path: "/settings" },
-];
-
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const { isAdmin, signOut } = useAuth();
+  const { unreadCount } = useAnnouncements();
+
+  const navItems: NavItem[] = [
+    { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+    { icon: Users, label: "Employees", path: "/employees" },
+    { icon: Building2, label: "Departments", path: "/departments", adminOnly: true },
+    { icon: ClipboardList, label: "Tasks", path: "/tasks" },
+    { icon: MessageCircle, label: "Messages", path: "/messages" },
+    { icon: Clock, label: "Attendance", path: "/attendance" },
+    { icon: FileText, label: "Documents", path: "/documents" },
+    { icon: Calendar, label: "Leave Management", path: "/leave" },
+    { icon: Megaphone, label: "Announcements", path: "/announcements", badge: unreadCount > 0 ? unreadCount : undefined },
+    { icon: BarChart3, label: "Reports", path: "/reports", adminOnly: true },
+    { icon: Shield, label: "Admin", path: "/admin", adminOnly: true },
+  ];
+
+  const bottomNavItems: NavItem[] = [
+    { icon: Settings, label: "Settings", path: "/settings" },
+  ];
 
   // Filter nav items based on role (isAdmin includes super_admin)
   const filteredNavItems = navItems.filter(
