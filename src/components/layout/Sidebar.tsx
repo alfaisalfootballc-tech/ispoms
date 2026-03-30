@@ -72,7 +72,7 @@ export function Sidebar() {
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-sidebar-foreground tracking-tight">OMNS</span>
+              <span className="text-sm font-bold text-sidebar-foreground tracking-tight">OMs</span>
               <span className="text-[10px] text-sidebar-foreground/60 uppercase tracking-wider">Office System</span>
             </div>
           )}

@@ -1,6 +1,6 @@
-# OMNS — Office Management & Notification System
+# OMs — Office Management & Notification System
 
-> A comprehensive, role-based office management platform built with React, TypeScript, and Lovable Cloud (Supabase). OMNS streamlines employee management, task tracking, leave workflows, attendance, document management, internal messaging, and company-wide announcements — all in one unified interface.
+> A comprehensive, role-based office management platform built with React, TypeScript, and Lovable Cloud (Supabase). OMs streamlines employee management, task tracking, leave workflows, attendance, document management, internal messaging, and company-wide announcements — all in one unified interface.
 
 ---
 
@@ -27,7 +27,7 @@
 
 ## Project Overview
 
-OMNS (Office Management & Notification System) is a full-stack web application designed for small-to-medium organizations to manage their daily office operations digitally. It features a modern, responsive UI with real-time updates, role-based access control, and a comprehensive suite of HR and productivity tools.
+OMs (Office Management & Notification System) is a full-stack web application designed for small-to-medium organizations to manage their daily office operations digitally. It features a modern, responsive UI with real-time updates, role-based access control, and a comprehensive suite of HR and productivity tools.
 
 **Live URL**: [https://ispoms.lovable.app](https://ispoms.lovable.app)
 
@@ -38,10 +38,10 @@ OMNS (Office Management & Notification System) is a full-stack web application d
 ### 1. Introduction
 
 #### 1.1 Purpose
-This document describes the software requirements for OMNS, an office management system that digitalizes employee management, attendance tracking, leave management, task management, document management, internal communication, and company announcements.
+This document describes the software requirements for OMs, an office management system that digitalizes employee management, attendance tracking, leave management, task management, document management, internal communication, and company announcements.
 
 #### 1.2 Scope
-OMNS is a browser-based SPA (Single Page Application) that provides:
+OMs is a browser-based SPA (Single Page Application) that provides:
 - Role-based dashboard with KPIs
 - Employee directory and management
 - Department organization
@@ -74,7 +74,7 @@ OMNS is a browser-based SPA (Single Page Application) that provides:
 ### 2. System Description
 
 #### 2.1 System Perspective
-OMNS is a client-side React application backed by Lovable Cloud (Supabase) for authentication, database, real-time subscriptions, file storage, and edge functions. The system follows a serverless architecture with PostgreSQL as the primary database.
+OMs is a client-side React application backed by Lovable Cloud (Supabase) for authentication, database, real-time subscriptions, file storage, and edge functions. The system follows a serverless architecture with PostgreSQL as the primary database.
 
 #### 2.2 System Features Summary
 

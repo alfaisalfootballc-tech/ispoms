@@ -15,7 +15,7 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        // Custom OMNS variants
+        // Custom OMs variants
         primary: "bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-sm hover:shadow-lg hover:-translate-y-0.5",
         success: "bg-success text-success-foreground hover:bg-success/90 shadow-sm",
         warning: "bg-warning text-warning-foreground hover:bg-warning/90 shadow-sm",
