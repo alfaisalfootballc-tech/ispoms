@@ -82,7 +82,7 @@ export default function Register() {
             <Building2 className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight">OMNS</h1>
+            <h1 className="text-xl font-bold tracking-tight">OMs</h1>
             <p className="text-xs text-white/60 uppercase tracking-wider">Office Management</p>
           </div>
         </div>
@@ -117,7 +117,7 @@ export default function Register() {
         </div>
 
         <div className="relative z-10 text-sm text-white/50">
-          © 2024 OMNS. Enterprise-grade office management.
+          © 2024 OMs. Enterprise-grade office management.
         </div>
       </div>
 
@@ -130,7 +130,7 @@ export default function Register() {
               <Building2 className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight">OMNS</h1>
+              <h1 className="text-xl font-bold tracking-tight">OMs</h1>
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Office System</p>
             </div>
           </div>

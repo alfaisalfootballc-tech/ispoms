@@ -108,7 +108,7 @@ export default function ResetPassword() {
             <Building2 className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight">OMNS</h1>
+            <h1 className="text-xl font-bold tracking-tight">OMs</h1>
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Office System</p>
           </div>
         </div>
