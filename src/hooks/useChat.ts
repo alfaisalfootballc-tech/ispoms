@@ -285,13 +285,18 @@ export function useChat() {
       return null;
     }
 
-    // Add both participants
+    // Add current user first, then the target user
+    const { error: selfError } = await supabase
+      .from("chat_conversation_participants")
+      .insert({ conversation_id: newConv.id, user_id: user.id });
+
+    if (selfError) {
+      console.error("Error adding self as participant:", selfError);
+    }
+
     const { error: participantError } = await supabase
       .from("chat_conversation_participants")
-      .insert([
-        { conversation_id: newConv.id, user_id: user.id },
-        { conversation_id: newConv.id, user_id: targetUserId },
-      ]);
+      .insert({ conversation_id: newConv.id, user_id: targetUserId });
 
     if (participantError) {
       console.error("Error adding participants:", participantError);
