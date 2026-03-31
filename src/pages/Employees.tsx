@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useMemo } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const statusStyles = {
   active: "bg-success/10 text-success",
@@ -41,6 +42,7 @@ const statusStyles = {
 
 export default function Employees() {
   const { employees, stats, isLoading, deleteEmployee, isDeleting } = useEmployees();
+  const { isAdmin } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [departmentFilter, setDepartmentFilter] = useState<string>("all");
@@ -90,7 +92,7 @@ export default function Employees() {
             <h1 className="text-2xl font-bold tracking-tight">Employees</h1>
             <p className="text-muted-foreground">Manage your team members and their information</p>
           </div>
-          <CreateEmployeeDialog />
+          {isAdmin && <CreateEmployeeDialog />}
         </div>
 
         {/* Filters & Search */}
@@ -188,6 +190,7 @@ export default function Employees() {
                       <p className="text-sm text-muted-foreground">{employee.job_title || "No title"}</p>
                     </div>
                   </div>
+                  {isAdmin && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button 
@@ -212,6 +215,7 @@ export default function Employees() {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
+                  )}
                 </div>
 
                 <div className="space-y-2 text-sm">
