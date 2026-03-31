@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useMemo } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const statusStyles = {
   active: "bg-success/10 text-success",
