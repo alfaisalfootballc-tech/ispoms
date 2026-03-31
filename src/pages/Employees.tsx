@@ -92,7 +92,7 @@ export default function Employees() {
             <h1 className="text-2xl font-bold tracking-tight">Employees</h1>
             <p className="text-muted-foreground">Manage your team members and their information</p>
           </div>
-          <CreateEmployeeDialog />
+          {isAdmin && <CreateEmployeeDialog />}
         </div>
 
         {/* Filters & Search */}
