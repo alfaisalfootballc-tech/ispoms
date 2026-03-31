@@ -42,6 +42,7 @@ const statusStyles = {
 
 export default function Employees() {
   const { employees, stats, isLoading, deleteEmployee, isDeleting } = useEmployees();
+  const { isAdmin } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [departmentFilter, setDepartmentFilter] = useState<string>("all");
