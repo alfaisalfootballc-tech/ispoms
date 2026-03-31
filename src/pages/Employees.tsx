@@ -190,6 +190,7 @@ export default function Employees() {
                       <p className="text-sm text-muted-foreground">{employee.job_title || "No title"}</p>
                     </div>
                   </div>
+                  {isAdmin && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button 
@@ -214,6 +215,7 @@ export default function Employees() {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
+                  )}
                 </div>
 
                 <div className="space-y-2 text-sm">
