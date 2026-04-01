@@ -23,9 +23,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon, Plus, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { useEmployees, EmployeeStatus } from "@/hooks/useEmployees";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface CreateEmployeeDialogProps {
   children?: React.ReactNode;
@@ -33,16 +33,19 @@ interface CreateEmployeeDialogProps {
 
 export function CreateEmployeeDialog({ children }: CreateEmployeeDialogProps) {
   const [open, setOpen] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [employeeNumber, setEmployeeNumber] = useState("");
   const [jobTitle, setJobTitle] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
-  const [status, setStatus] = useState<EmployeeStatus>("active");
   const [departmentId, setDepartmentId] = useState<string>("");
-  const [profileId, setProfileId] = useState<string>("");
   const [hireDate, setHireDate] = useState<Date>();
+  const [isCreating, setIsCreating] = useState(false);
 
-  const { createEmployee, isCreating } = useEmployees();
+  const queryClient = useQueryClient();
 
   const { data: departments } = useQuery({
     queryKey: ["departments"],
@@ -56,44 +59,69 @@ export function CreateEmployeeDialog({ children }: CreateEmployeeDialogProps) {
     },
   });
 
-  const { data: profiles } = useQuery({
-    queryKey: ["profiles-for-employee"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, first_name, last_name, email")
-        .order("first_name");
-      if (error) throw error;
-      return data;
-    },
-  });
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await createEmployee({
-      employee_number: employeeNumber.trim() || null,
-      job_title: jobTitle.trim() || null,
-      phone: phone.trim() || null,
-      location: location.trim() || null,
-      status,
-      department_id: departmentId || null,
-      profile_id: profileId || null,
-      hire_date: hireDate ? format(hireDate, "yyyy-MM-dd") : null,
-    });
+    if (!firstName.trim() || !email.trim() || !password.trim()) {
+      toast.error("First name, email, and password are required");
+      return;
+    }
 
-    setOpen(false);
-    resetForm();
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    setIsCreating(true);
+
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+
+      const response = await supabase.functions.invoke("create-employee-user", {
+        body: {
+          email: email.trim(),
+          password: password.trim(),
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          employeeNumber: employeeNumber.trim() || null,
+          jobTitle: jobTitle.trim() || null,
+          phone: phone.trim() || null,
+          location: location.trim() || null,
+          departmentId: departmentId || null,
+          hireDate: hireDate ? format(hireDate, "yyyy-MM-dd") : null,
+        },
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      if (response.data?.error) {
+        throw new Error(response.data.error);
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
+      toast.success(`Employee ${firstName} ${lastName} created with login credentials`);
+      setOpen(false);
+      resetForm();
+    } catch (error: any) {
+      toast.error("Failed to create employee: " + error.message);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const resetForm = () => {
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setPassword("");
     setEmployeeNumber("");
     setJobTitle("");
     setPhone("");
     setLocation("");
-    setStatus("active");
     setDepartmentId("");
-    setProfileId("");
     setHireDate(undefined);
   };
 
@@ -107,31 +135,61 @@ export function CreateEmployeeDialog({ children }: CreateEmployeeDialogProps) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Add New Employee</DialogTitle>
             <DialogDescription>
-              Add a new employee to your organization.
+              Create a new employee with login credentials. They can log in immediately.
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name *</Label>
+                <Input
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="John"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Doe"
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label>Link to User Profile</Label>
-              <Select value={profileId} onValueChange={(v) => setProfileId(v === "none" ? "" : v)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a user profile (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">No profile</SelectItem>
-                  {profiles?.map((profile) => (
-                    <SelectItem key={profile.id} value={profile.id}>
-                      {profile.first_name} {profile.last_name} ({profile.email})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label htmlFor="email">Email (Login) *</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="john@company.com"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Password *</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Min 6 characters"
+                minLength={6}
+                required
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -200,46 +258,30 @@ export function CreateEmployeeDialog({ children }: CreateEmployeeDialogProps) {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Status</Label>
-                <Select value={status} onValueChange={(v) => setStatus(v as EmployeeStatus)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="on_leave">On Leave</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Hire Date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !hireDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {hireDate ? format(hireDate, "PPP") : "Pick a date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={hireDate}
-                      onSelect={setHireDate}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
+            <div className="space-y-2">
+              <Label>Hire Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !hireDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {hireDate ? format(hireDate, "PPP") : "Pick a date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={hireDate}
+                    onSelect={setHireDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
@@ -249,7 +291,7 @@ export function CreateEmployeeDialog({ children }: CreateEmployeeDialogProps) {
             </Button>
             <Button type="submit" disabled={isCreating}>
               {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Add Employee
+              Create Employee
             </Button>
           </DialogFooter>
         </form>
