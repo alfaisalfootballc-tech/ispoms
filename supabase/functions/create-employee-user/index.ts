@@ -82,11 +82,31 @@ Deno.serve(async (req) => {
       await adminClient.from("profiles").update({ department_id: departmentId }).eq("id", newUserId);
     }
 
+    // Auto-generate employee number if not provided or if it could conflict
+    let finalEmployeeNumber = employeeNumber?.trim() || null;
+    if (!finalEmployeeNumber) {
+      const { data: latest } = await adminClient
+        .from("employees")
+        .select("employee_number")
+        .not("employee_number", "is", null)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      
+      const lastNum = latest?.[0]?.employee_number;
+      if (lastNum) {
+        const match = lastNum.match(/(\d+)$/);
+        const next = match ? parseInt(match[1]) + 1 : 1;
+        finalEmployeeNumber = `EMP-${String(next).padStart(3, "0")}`;
+      } else {
+        finalEmployeeNumber = "EMP-001";
+      }
+    }
+
     // Create employee record linked to the new user
     const { data: empData, error: empError } = await adminClient.from("employees").insert({
       profile_id: newUserId,
       user_id: newUserId,
-      employee_number: employeeNumber || null,
+      employee_number: finalEmployeeNumber,
       job_title: jobTitle || null,
       phone: phone || null,
       location: location || null,
